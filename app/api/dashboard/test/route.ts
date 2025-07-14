@@ -1,8 +1,14 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server"
+import { addCorsHeaders } from "@/lib/cors";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 
-export const GET = async (request: Request) => {
+
+export async function OPTIONS(request: NextRequest) {
+  return addCorsHeaders(new NextResponse(null, { status: 200 }), request);
+}
+
+export const GET = async (request: NextRequest) => {
   try {
     console.log("[Dashboard Test] Starting test request...");
     
@@ -12,7 +18,8 @@ export const GET = async (request: Request) => {
     console.log("[Dashboard Test] User ID:", session?.user?.id);
     
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "No session" }, { status: 401 });
+      const response = NextResponse.json({ error: "No session" }, { status: 401 });
+    return addCorsHeaders(response, request as NextRequest);
     }
 
     // Test 2: Check if database connection works
@@ -34,18 +41,19 @@ export const GET = async (request: Request) => {
     const datasCount = await db.data.count();
     console.log("[Dashboard Test] Total datas in DB:", datasCount);
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       user: session.user.id,
       formsCount: forms.length,
       totalDatas: datasCount,
       forms: forms
     });
+    return addCorsHeaders(response, request as NextRequest);
 
   } catch (error) {
     console.error("[Dashboard Test] Error:", error);
     console.error("[Dashboard Test] Error stack:", error instanceof Error ? error.stack : "No stack");
-    return NextResponse.json(
+    const response = NextResponse.json(
       { 
         error: "Test failed", 
         message: error instanceof Error ? error.message : "Unknown error",
@@ -53,5 +61,6 @@ export const GET = async (request: Request) => {
       },
       { status: 500 }
     );
+    return addCorsHeaders(response, request as NextRequest);
   }
 }; 

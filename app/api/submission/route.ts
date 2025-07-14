@@ -1,7 +1,12 @@
 import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
+import { addCorsHeaders } from "@/lib/cors";
 
-export const POST = async function (request: Request) {
+export async function OPTIONS(request: NextRequest) {
+  return addCorsHeaders(new NextResponse(null, { status: 200 }), request);
+}
+
+export const POST = async function (request: NextRequest) {
   try {
     const body = await request.json();
     // console.log("Received data:", body);
@@ -23,12 +28,15 @@ export const POST = async function (request: Request) {
       },
     });
 
-    return NextResponse.json(submission, { status: 201 });
+    const response = NextResponse.json(submission, { status: 201 });
+    return addCorsHeaders(response, request);
   } catch (error) {
     console.log(error);
     if (error instanceof Error) {
-      return NextResponse.json({ message: error.message }, { status: 500 });
+      const response = NextResponse.json({ message: error.message }, { status: 500 });
+      return addCorsHeaders(response, request);
     }
-    return NextResponse.json("server error", { status: 500 });
+    const response = NextResponse.json("server error", { status: 500 });
+    return addCorsHeaders(response, request);
   }
 };

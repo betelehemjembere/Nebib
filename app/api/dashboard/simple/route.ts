@@ -1,8 +1,14 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server"
+import { addCorsHeaders } from "@/lib/cors";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 
-export const GET = async (request: Request) => {
+
+export async function OPTIONS(request: NextRequest) {
+  return addCorsHeaders(new NextResponse(null, { status: 200 }), request);
+}
+
+export const GET = async (request: NextRequest) => {
   try {
     console.log("[Dashboard Simple] Starting...");
     
@@ -10,7 +16,8 @@ export const GET = async (request: Request) => {
     console.log("[Dashboard Simple] Session:", session ? "Found" : "Not found");
     
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      const response = NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return addCorsHeaders(response, request as NextRequest);
     }
 
     console.log("[Dashboard Simple] User ID:", session.user.id);
@@ -39,7 +46,7 @@ export const GET = async (request: Request) => {
     const totalSubmissions = forms.reduce((sum, f) => sum + f._count.datas, 0);
     const avgResponseRate = totalForms > 0 ? Math.round((totalSubmissions / (totalForms * 10)) * 100) : 0;
 
-    const response = {
+    const responseData = {
       stats: {
         totalForms,
         activeForms,
@@ -60,15 +67,17 @@ export const GET = async (request: Request) => {
       }))
     };
 
-    console.log("[Dashboard Simple] Response:", response);
-    return NextResponse.json(response);
+    console.log("[Dashboard Simple] Response:", responseData);
+    const response = NextResponse.json(responseData);
+    return addCorsHeaders(response, request as NextRequest);
 
   } catch (error) {
     console.error("[Dashboard Simple] Error:", error);
     console.error("[Dashboard Simple] Stack:", error instanceof Error ? error.stack : "No stack");
-    return NextResponse.json(
+    const response = NextResponse.json(
       { error: "Internal server error", details: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 }
     );
+    return addCorsHeaders(response, request as NextRequest);
   }
 }; 

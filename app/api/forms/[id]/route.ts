@@ -1,9 +1,15 @@
 import { db } from "@/lib/db"
-import { NextResponse } from "next/server"
+import { NextResponse, NextRequest } from "next/server"
+import { addCorsHeaders } from "@/lib/cors"
 import { auth } from "@/lib/auth"
 
 type RouteParams = {
   id: string
+}
+
+
+export async function OPTIONS(request: NextRequest) {
+  return addCorsHeaders(new NextResponse(null, { status: 200 }), request);
 }
 
 export const GET = async (request: Request, context: { params: Promise<RouteParams> }) => {
@@ -15,7 +21,8 @@ export const GET = async (request: Request, context: { params: Promise<RoutePara
     console.log("📋 API - Request URL:", request.url)
 
     if (!formId) {
-      return NextResponse.json({ error: "Form ID is required" }, { status: 400 })
+      const response = NextResponse.json({ error: "Form ID is required" }, { status: 400 });
+    return addCorsHeaders(response, request as NextRequest);
     }
 
     // Check authentication
@@ -25,7 +32,8 @@ export const GET = async (request: Request, context: { params: Promise<RoutePara
     console.log("📋 Session result:", session ? "Found" : "Not found")
     
     if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      const response = NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return addCorsHeaders(response, request as NextRequest);
     }
 
     // Find the form by ID and include fields and submissions
@@ -41,14 +49,17 @@ export const GET = async (request: Request, context: { params: Promise<RoutePara
     })
 
     if (!form) {
-      return NextResponse.json({ error: "Form not found" }, { status: 404 })
+      const response = NextResponse.json({ error: "Form not found" }, { status: 404 });
+    return addCorsHeaders(response, request as NextRequest);
     }
 
     console.log("✅ Form fetched successfully")
 
-    return NextResponse.json(form, { status: 200 })
+    const response = NextResponse.json(form, { status: 200 });
+    return addCorsHeaders(response, request as NextRequest);
   } catch (error) {
     console.error("[FORM_FETCH_ERROR]", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    const response = NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return addCorsHeaders(response, request as NextRequest);
   }
 }

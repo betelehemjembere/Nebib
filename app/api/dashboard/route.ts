@@ -1,9 +1,15 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server"
+import { addCorsHeaders } from "@/lib/cors";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 
 function safeNumber(val: any) {
   return typeof val === 'number' && !isNaN(val) && isFinite(val) ? val : 0;
+}
+
+
+export async function OPTIONS(request: NextRequest) {
+  return addCorsHeaders(new NextResponse(null, { status: 200 }), request);
 }
 
 export const GET = async (request: Request) => {
@@ -15,7 +21,8 @@ export const GET = async (request: Request) => {
     
     if (!session?.user?.id) {
       console.log("[Dashboard API] No user ID in session");
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      const response = NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return addCorsHeaders(response, request as NextRequest);
     }
 
     console.log("[Dashboard API] User ID:", session.user.id);
@@ -116,7 +123,7 @@ export const GET = async (request: Request) => {
 
     console.log("[Dashboard API] Recent forms processed:", recentForms.length);
 
-    const response = {
+    const responseData = {
       stats: {
         totalForms,
         activeForms,
@@ -129,16 +136,18 @@ export const GET = async (request: Request) => {
       recentForms,
     };
 
-    console.log("[Dashboard API] Response prepared:", response);
-    return NextResponse.json(response);
+    console.log("[Dashboard API] Response prepared:", responseData);
+    const response = NextResponse.json(responseData);
+    return addCorsHeaders(response, request as NextRequest);
 
   } catch (error) {
     console.error("[Dashboard API] Error details:", error);
     console.error("[Dashboard API] Error stack:", error instanceof Error ? error.stack : "No stack trace");
-    return NextResponse.json(
+    const response = NextResponse.json(
       { error: "Internal server error", details: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 }
     );
+    return addCorsHeaders(response, request as NextRequest);
   }
 };
 

@@ -1,16 +1,24 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server"
+import { addCorsHeaders } from "@/lib/cors";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 
-export const POST = async (request: Request) => {
+
+export async function OPTIONS(request: NextRequest) {
+  return addCorsHeaders(new NextResponse(null, { status: 200 }), request);
+}
+
+export const POST = async (request: NextRequest) => {
   try {
     const session = await auth.api.getSession({ headers: request.headers });
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      const response = NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return addCorsHeaders(response, request);
     }
     const { formId, studentId, date, status } = await request.json();
     if (!formId || !studentId || !date || !status) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+      const response = NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    return addCorsHeaders(response, request);
     }
     // Find the Data record for this student/date/form
     let dataRecord = await db.data.findFirst({
@@ -38,9 +46,11 @@ export const POST = async (request: Request) => {
         data: { data: newData },
       });
     }
-    return NextResponse.json({ success: true });
+    const response = NextResponse.json({ success: true });
+    return addCorsHeaders(response, request);
   } catch (error) {
     console.error("Attendance mark error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    const response = NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return addCorsHeaders(response, request);
   }
 }; 

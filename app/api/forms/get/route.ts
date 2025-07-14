@@ -1,8 +1,14 @@
 import { db } from "@/lib/db";
 import getSession from "@/lib/get-session-user";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server"
+import { addCorsHeaders } from "@/lib/cors";
 
-export const GET = async function () {
+
+export async function OPTIONS(request: NextRequest) {
+  return addCorsHeaders(new NextResponse(null, { status: 200 }), request);
+}
+
+export const GET = async function (request: NextRequest) {
   try {
     const session = await getSession();
 
@@ -24,9 +30,10 @@ export const GET = async function () {
     return new Response(JSON.stringify(forms), { status: 200 });
   } catch (error) {
     console.error("[FORMS_FETCH_ERROR]", error);
-    return NextResponse.json(
+    const response = NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
     );
+    return addCorsHeaders(response, request);
   }
 };

@@ -1,4 +1,10 @@
-import { NextResponse } from "next/server"
+import { NextResponse, NextRequest } from "next/server"
+import { addCorsHeaders } from "@/lib/cors"
+
+
+export async function OPTIONS(request: NextRequest) {
+  return addCorsHeaders(new NextResponse(null, { status: 200 }), request);
+}
 
 export const GET = async (request: Request, { params }: { params: Promise<{ formId: string }> }) => {
   try {
@@ -20,7 +26,7 @@ export const GET = async (request: Request, { params }: { params: Promise<{ form
     const formId = resolvedParams?.formId
     console.log("🧪 Test Params - Extracted formId:", formId)
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       url: request.url,
       pathParts,
@@ -33,15 +39,17 @@ export const GET = async (request: Request, { params }: { params: Promise<{ form
         fromParams: formId,
         match: formIdFromPath === formId,
       },
-    })
+    });
+    return addCorsHeaders(response, request as NextRequest);
   } catch (error) {
     console.error("🚨 Test Params Error:", error)
-    return NextResponse.json(
+    const response = NextResponse.json(
       {
         error: error instanceof Error ? error.message : "Unknown error",
         stack: error instanceof Error ? error.stack : undefined,
       },
       { status: 500 },
-    )
+    );
+    return addCorsHeaders(response, request as NextRequest);
   }
 }

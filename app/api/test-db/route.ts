@@ -1,7 +1,13 @@
 import { db } from "@/lib/db"
-import { NextResponse } from "next/server"
+import { NextResponse, NextRequest } from "next/server"
+import { addCorsHeaders } from "@/lib/cors"
 
-export const GET = async () => {
+
+export async function OPTIONS(request: NextRequest) {
+  return addCorsHeaders(new NextResponse(null, { status: 200 }), request);
+}
+
+export const GET = async (request: NextRequest) => {
   try {
     console.log("🔍 Debugging all forms in database...")
 
@@ -23,20 +29,22 @@ export const GET = async () => {
     // Also get the count
     const totalCount = await db.form.count()
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       totalCount,
       forms: allForms,
       message: `Found ${allForms.length} forms in database`,
-    })
+    });
+    return addCorsHeaders(response, request);
   } catch (error) {
     console.error("🚨 Debug forms error:", error)
-    return NextResponse.json(
+    const response = NextResponse.json(
       {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 },
-    )
+    );
+    return addCorsHeaders(response, request);
   }
 }

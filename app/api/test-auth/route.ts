@@ -1,5 +1,11 @@
 import { auth } from "@/lib/auth"
-import { NextResponse } from "next/server"
+import { NextResponse, NextRequest } from "next/server"
+import { addCorsHeaders } from "@/lib/cors"
+
+
+export async function OPTIONS(request: NextRequest) {
+  return addCorsHeaders(new NextResponse(null, { status: 200 }), request);
+}
 
 export const GET = async (request: Request) => {
   try {
@@ -13,25 +19,28 @@ export const GET = async (request: Request) => {
     console.log("📋 Session:", session ? "Found" : "Not found")
     
     if (session) {
-      return NextResponse.json({
+      const response = NextResponse.json({
         authenticated: true,
         user: {
           id: session.user.id,
           email: session.user.email,
           name: session.user.name
         }
-      })
+      });
+    return addCorsHeaders(response, request as NextRequest);
     } else {
-      return NextResponse.json({
+      const response = NextResponse.json({
         authenticated: false,
         message: "No session found"
-      })
+      });
+    return addCorsHeaders(response, request as NextRequest);
     }
   } catch (error) {
     console.error("🚨 Auth test error:", error)
-    return NextResponse.json({
+    const response = NextResponse.json({
       authenticated: false,
       error: error instanceof Error ? error.message : "Unknown error"
-    })
+    });
+    return addCorsHeaders(response, request as NextRequest);
   }
 } 

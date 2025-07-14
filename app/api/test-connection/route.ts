@@ -1,7 +1,12 @@
 import { db } from "@/lib/db"
-import { NextResponse } from "next/server"
+import { NextResponse, NextRequest } from "next/server"
+import { addCorsHeaders } from "@/lib/cors"
 
-export async function GET() {
+export async function OPTIONS(request: NextRequest) {
+  return addCorsHeaders(new NextResponse(null, { status: 200 }), request);
+}
+
+export async function GET(request: NextRequest) {
   try {
     console.log("🧪 Testing database connection...")
 
@@ -19,16 +24,17 @@ export async function GET() {
     })
     console.log("📋 First form:", firstForm)
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       message: "Database connection successful",
       formCount,
       firstForm,
       timestamp: new Date().toISOString(),
     })
+    return addCorsHeaders(response, request);
   } catch (error) {
     console.error("🚨 Connection test failed:", error)
-    return NextResponse.json(
+    const response = NextResponse.json(
       {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",
@@ -36,5 +42,6 @@ export async function GET() {
       },
       { status: 500 },
     )
+    return addCorsHeaders(response, request);
   }
 }

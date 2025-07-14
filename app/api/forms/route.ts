@@ -1,8 +1,13 @@
 import { db } from "@/lib/db"
-import { NextResponse } from "next/server"
+import { NextResponse, NextRequest } from "next/server"
 import { auth } from "@/lib/auth"
+import { addCorsHeaders } from "@/lib/cors"
 
-export const POST = async (request: Request) => {
+export async function OPTIONS(request: NextRequest) {
+  return addCorsHeaders(new NextResponse(null, { status: 200 }), request);
+}
+
+export const POST = async (request: NextRequest) => {
   try {
     console.log("🔍 Attempting to get session...")
     console.log("🍪 Request cookies:", request.headers.get("cookie"))
@@ -19,7 +24,8 @@ export const POST = async (request: Request) => {
     
     if (!session) {
       console.log("❌ No session found - returning unauthorized")
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      const response = NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return addCorsHeaders(response, request);
     }
 
     const body = await request.json()
@@ -27,10 +33,11 @@ export const POST = async (request: Request) => {
 
     // Validate required fields
     if (!topic || !description) {
-      return NextResponse.json(
+      const response = NextResponse.json(
         { error: "Topic and description are required" },
         { status: 400 }
       )
+      return addCorsHeaders(response, request);
     }
 
     // Generate a unique link for the form
@@ -61,27 +68,30 @@ export const POST = async (request: Request) => {
       }
     })
 
-    return NextResponse.json(form, { status: 201 })
+    const response = NextResponse.json(form, { status: 201 })
+    return addCorsHeaders(response, request);
   } catch (error) {
     console.error("🚨 [FORM_CREATION_ERROR]", error)
-    return NextResponse.json(
+    const response = NextResponse.json(
       {
         error: "Internal server error",
         details: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 }
     )
+    return addCorsHeaders(response, request);
   }
 }
 
-export const GET = async (request: Request) => {
+export const GET = async (request: NextRequest) => {
   try {
     // Create a proper headers object for better-auth
     const headers = new Headers(request.headers)
     const session = await auth.api.getSession({ headers })
     
     if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      const response = NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return addCorsHeaders(response, request);
     }
 
     // Get all forms for the current user
@@ -98,10 +108,11 @@ export const GET = async (request: Request) => {
       },
     })
 
-    return NextResponse.json(forms, { status: 200 })
+    const response = NextResponse.json(forms, { status: 200 })
+    return addCorsHeaders(response, request);
   } catch (error) {
     console.error("🚨 [FORMS_FETCH_ERROR]", error)
-    return NextResponse.json(
+    const response = NextResponse.json(
       {
         error: "Internal server error",
         details: error instanceof Error ? error.message : "Unknown error",
@@ -109,5 +120,6 @@ export const GET = async (request: Request) => {
       },
       { status: 500 }
     )
+    return addCorsHeaders(response, request);
   }
 }

@@ -1,8 +1,13 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server"
+import { addCorsHeaders } from "@/lib/cors";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 
-export const GET = async (request: Request) => {
+export async function OPTIONS(request: NextRequest) {
+  return addCorsHeaders(new NextResponse(null, { status: 200 }), request);
+}
+
+export const GET = async (request: NextRequest) => {
   try {
     console.log("Attendance API: Starting request");
     
@@ -11,7 +16,8 @@ export const GET = async (request: Request) => {
     
     if (!session?.user?.id) {
       console.log("Attendance API: No session found");
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      const response = NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return addCorsHeaders(response, request);
     }
 
     console.log("Attendance API: Fetching forms for user", session.user.id);
@@ -128,7 +134,7 @@ export const GET = async (request: Request) => {
     const totalRecords = attendanceRecords.length;
     const averageAttendance = totalRecords > 0 ? ((totalPresent / totalRecords) * 100) : 0;
 
-    const response = {
+    const responseData = {
       attendanceRecords,
       sessionStats: sessionStats.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()),
       statistics: {
@@ -143,18 +149,20 @@ export const GET = async (request: Request) => {
     };
 
     console.log("Attendance API: Returning response", { 
-      statistics: response.statistics,
-      recordsCount: response.attendanceRecords.length 
+      statistics: responseData.statistics,
+      recordsCount: responseData.attendanceRecords.length 
     });
 
-    return NextResponse.json(response);
+    const response = NextResponse.json(responseData);
+    return addCorsHeaders(response, request);
 
   } catch (error) {
     console.error("Attendance API error:", error);
     console.error("Attendance API error stack:", error instanceof Error ? error.stack : 'No stack trace');
-    return NextResponse.json(
+    const response = NextResponse.json(
       { error: "Internal server error", details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
+    return addCorsHeaders(response, request);
   }
 }; 

@@ -1,7 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server"
+import { addCorsHeaders } from "@/lib/cors";
 import { db } from "@/lib/db";
 
-export const GET = async () => {
+export async function OPTIONS(request: NextRequest) {
+  return addCorsHeaders(new NextResponse(null, { status: 200 }), request);
+}
+
+export const GET = async (request: NextRequest) => {
   try {
     console.log("Test API: Starting database test");
     
@@ -22,7 +27,7 @@ export const GET = async () => {
 
     console.log("Test API: Found users", { count: users.length });
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       forms: forms.map(f => ({
         id: f.id,
@@ -38,12 +43,14 @@ export const GET = async () => {
         name: u.name
       }))
     });
-
+    
+    return addCorsHeaders(response, request);
   } catch (error) {
     console.error("Test API error:", error);
-    return NextResponse.json(
+    const response = NextResponse.json(
       { error: "Database error", details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
+    return addCorsHeaders(response, request);
   }
 }; 

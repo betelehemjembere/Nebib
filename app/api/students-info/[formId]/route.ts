@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server"
+import { addCorsHeaders } from "@/lib/cors";
 
 // Type for params
 // GET and POST use formId from params, PUT/DELETE use studentId from body
@@ -7,6 +8,11 @@ import { NextResponse } from "next/server";
 type GetParams = Promise<{ formId: string }>;
 
 // GET: List all students for a form
+
+export async function OPTIONS(request: NextRequest) {
+  return addCorsHeaders(new NextResponse(null, { status: 200 }), request);
+}
+
 export const GET = async function (
   request: Request,
   { params }: { params: GetParams }
@@ -17,13 +23,16 @@ export const GET = async function (
       where: { id: formId },
       include: { datas: true, fields: true },
     });
-    return NextResponse.json(studentsData);
+    const response = NextResponse.json(studentsData);
+    return addCorsHeaders(response, request as NextRequest);
   } catch (error) {
     console.log(error);
     if (error instanceof Error) {
-      return NextResponse.json({ message: error.message }, { status: 500 });
+      const response = NextResponse.json({ message: error.message }, { status: 500 });
+    return addCorsHeaders(response, request as NextRequest);
     }
-    return NextResponse.json("server error", { status: 500 });
+    const response = NextResponse.json("server error", { status: 500 });
+    return addCorsHeaders(response, request as NextRequest);
   }
 };
 
@@ -41,13 +50,16 @@ export const POST = async function (
         data: body.data,
       },
     });
-    return NextResponse.json(newStudent, { status: 201 });
+    const response = NextResponse.json(newStudent, { status: 201 });
+    return addCorsHeaders(response, request as NextRequest);
   } catch (error) {
     console.log(error);
     if (error instanceof Error) {
-      return NextResponse.json({ message: error.message }, { status: 500 });
+      const response = NextResponse.json({ message: error.message }, { status: 500 });
+    return addCorsHeaders(response, request as NextRequest);
     }
-    return NextResponse.json("server error", { status: 500 });
+    const response = NextResponse.json("server error", { status: 500 });
+    return addCorsHeaders(response, request as NextRequest);
   }
 };
 
@@ -63,13 +75,16 @@ export const PUT = async function (
       where: { id: body.studentId, formId },
       data: { data: body.data },
     });
-    return NextResponse.json(updatedStudent);
+    const response = NextResponse.json(updatedStudent);
+    return addCorsHeaders(response, request as NextRequest);
   } catch (error) {
     console.log(error);
     if (error instanceof Error) {
-      return NextResponse.json({ message: error.message }, { status: 500 });
+      const response = NextResponse.json({ message: error.message }, { status: 500 });
+    return addCorsHeaders(response, request as NextRequest);
     }
-    return NextResponse.json("server error", { status: 500 });
+    const response = NextResponse.json("server error", { status: 500 });
+    return addCorsHeaders(response, request as NextRequest);
   }
 };
 
@@ -84,12 +99,15 @@ export const DELETE = async function (
     await db.data.delete({
       where: { id: body.studentId, formId },
     });
-    return NextResponse.json({ success: true });
+    const response = NextResponse.json({ success: true });
+    return addCorsHeaders(response, request as NextRequest);
   } catch (error) {
     console.log(error);
     if (error instanceof Error) {
-      return NextResponse.json({ message: error.message }, { status: 500 });
+      const response = NextResponse.json({ message: error.message }, { status: 500 });
+        return addCorsHeaders(response, request as NextRequest);
     }
-    return NextResponse.json("server error", { status: 500 });
+    const response = NextResponse.json
+    
   }
 };

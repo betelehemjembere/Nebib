@@ -1,7 +1,12 @@
 import { db } from "@/lib/db"
-import { NextResponse } from "next/server"
+import { NextResponse, NextRequest } from "next/server"
+import { addCorsHeaders } from "@/lib/cors"
 
-export async function GET() {
+export async function OPTIONS(request: NextRequest) {
+  return addCorsHeaders(new NextResponse(null, { status: 200 }), request);
+}
+
+export async function GET(request: NextRequest) {
   try {
     console.log("🔍 Debugging all forms in database...")
 
@@ -11,7 +16,7 @@ export async function GET() {
       console.log("✅ Database connection successful")
     } catch (dbError) {
       console.error("❌ Database connection failed:", dbError)
-      return NextResponse.json(
+      const response = NextResponse.json(
         {
           success: false,
           error: "Database connection failed",
@@ -19,6 +24,7 @@ export async function GET() {
         },
         { status: 500 },
       )
+      return addCorsHeaders(response, request);
     }
 
     // Get all forms with their basic info
@@ -48,7 +54,7 @@ export async function GET() {
 
     console.log(`🔍 Checking for specific form ${specificFormId}:`, specificForm ? "Found" : "Not found")
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       totalCount,
       forms: allForms,
@@ -60,9 +66,10 @@ export async function GET() {
       message: `Found ${allForms.length} forms in database`,
       timestamp: new Date().toISOString(),
     })
+    return addCorsHeaders(response, request);
   } catch (error) {
     console.error("🚨 Debug forms error:", error)
-    return NextResponse.json(
+    const response = NextResponse.json(
       {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",
@@ -70,5 +77,6 @@ export async function GET() {
       },
       { status: 500 },
     )
+    return addCorsHeaders(response, request);
   }
 }
