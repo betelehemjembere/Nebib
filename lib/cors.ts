@@ -4,13 +4,12 @@ import { NextRequest, NextResponse } from 'next/server';
 export function addCorsHeaders(response: NextResponse, request: NextRequest) {
   const origin = request.headers.get('origin');
 
-  const allowedOrigins =
-    process.env.NODE_ENV === 'production'
-      ? [
-          'https://nebib-forms-production-c7f6.up.railway.app',
-          'https://www.nebibs.com',
-        ]
-      : ['http://localhost:3000', 'http://localhost:3001'];
+  const allowedOrigins = [
+    'https://nebib-forms-production-c7f6.up.railway.app',
+    'https://www.nebibs.com',
+    'http://localhost:3000',
+    'http://127.0.0.1:3001'
+  ];
 
   const isAllowedOrigin =
     allowedOrigins.includes('*') || (origin && allowedOrigins.includes(origin));

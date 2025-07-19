@@ -136,6 +136,29 @@ export default function CheckIn({ data }: StudentsDatasProps) {
 
   // Update handleCalendarDateClick to POST to backend
   const handleCalendarDateClick = async (studentId: string, date: Date, status: 'present' | 'absent' | 'late') => {
+    const student = filteredDatas?.find(entry => entry.id === studentId);
+    if (!student) return;
+    
+    const registrationDate = new Date(student.createdAt);
+    const checkDate = new Date(date);
+    
+    // Compare dates at day level (ignoring time)
+    const registrationDay = new Date(registrationDate.getFullYear(), registrationDate.getMonth(), registrationDate.getDate());
+    const checkDay = new Date(checkDate.getFullYear(), checkDate.getMonth(), checkDate.getDate());
+    const today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+    
+    // Don't allow marking attendance before registration date
+    if (checkDay < registrationDay) {
+      toast.error(`Cannot mark attendance before registration date (${format(registrationDate, 'MMM dd, yyyy')})`);
+      return;
+    }
+    
+    // Don't allow marking attendance for future dates
+    if (checkDay > today) {
+      toast.error("Cannot mark attendance for future dates");
+      return;
+    }
+    
     const dateStr = format(date, 'yyyy-MM-dd');
     const updatedHistory = [
       ...(attendanceHistory[studentId] || []).filter(record => record.date !== dateStr),
@@ -468,7 +491,8 @@ export default function CheckIn({ data }: StudentsDatasProps) {
                 students={(filteredDatas || []).map(entry => ({
                   id: entry.id,
                   name: getStudentName(entry),
-                  history: attendanceHistory[entry.id] || []
+                  history: attendanceHistory[entry.id] || [],
+                  registrationDate: new Date(entry.createdAt)
                 }))}
                 onDateClick={handleCalendarDateClick}
               />

@@ -15,9 +15,10 @@ import {
   Users,
   Filter,
   Grid3X3,
-  List
+  List,
+  Table
 } from "lucide-react";
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths } from "date-fns";
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, isBefore, isAfter, startOfDay } from "date-fns";
 
 interface AttendanceRecord {
   date: string;
@@ -28,6 +29,7 @@ interface Student {
   id: string;
   name: string;
   history: AttendanceRecord[];
+  registrationDate: Date;
 }
 
 interface AttendanceCalendarProps {
@@ -38,11 +40,12 @@ interface AttendanceCalendarProps {
 export default function AttendanceCalendar({ students, onDateClick }: AttendanceCalendarProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedStudent, setSelectedStudent] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar');
+  const [viewMode, setViewMode] = useState<'calendar' | 'list' | 'table'>('calendar');
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
   const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd });
+  const today = startOfDay(new Date());
 
   const getStatusForDate = (studentId: string, date: Date): 'present' | 'absent' | 'late' | null => {
     const student = students.find(s => s.id === studentId);
@@ -51,6 +54,15 @@ export default function AttendanceCalendar({ students, onDateClick }: Attendance
     const dateStr = format(date, 'yyyy-MM-dd');
     const record = student.history.find(h => h.date === dateStr);
     return record ? record.status : null;
+  };
+
+  const isDateSelectable = (student: Student, date: Date): boolean => {
+    const registrationDate = startOfDay(student.registrationDate);
+    const checkDate = startOfDay(date);
+    const today = startOfDay(new Date());
+    
+    // Date should be from registration date to today (inclusive)
+    return !isBefore(checkDate, registrationDate) && !isAfter(checkDate, today);
   };
 
   const getStatusIcon = (status: 'present' | 'absent' | 'late' | null) => {
@@ -79,7 +91,25 @@ export default function AttendanceCalendar({ students, onDateClick }: Attendance
     }
   };
 
+  const getStatusText = (status: 'present' | 'absent' | 'late' | null) => {
+    switch (status) {
+      case 'present':
+        return 'Present';
+      case 'absent':
+        return 'Absent';
+      case 'late':
+        return 'Late';
+      default:
+        return 'Unmarked';
+    }
+  };
+
   const handleDateClick = (studentId: string, date: Date) => {
+    const student = students.find(s => s.id === studentId);
+    if (!student || !isDateSelectable(student, date)) {
+      return; // Don't allow clicking on non-selectable dates
+    }
+
     const currentStatus = getStatusForDate(studentId, date);
     let newStatus: 'present' | 'absent' | 'late';
     
@@ -152,6 +182,13 @@ export default function AttendanceCalendar({ students, onDateClick }: Attendance
             >
               <List className="w-4 h-4" />
             </Button>
+            <Button 
+              variant={viewMode === 'table' ? 'default' : 'ghost'} 
+              size="sm"
+              onClick={() => setViewMode('table')}
+            >
+              <Table className="w-4 h-4" />
+            </Button>
           </div>
           
           {/* Month Navigation */}
@@ -177,15 +214,18 @@ export default function AttendanceCalendar({ students, onDateClick }: Attendance
         </div>
       </div>
 
-      {viewMode === 'calendar' ? (
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+      {viewMode === 'calendar' && (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 lg:gap-6">
           {filteredStudents.map(student => (
             <Card key={student.id} className="border-0 shadow-lg">
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                   <Users className="w-5 h-5 text-blue-600" />
-                  {student.name}
+                  <span className="truncate">{student.name}</span>
                 </CardTitle>
+                <p className="text-sm text-gray-500">
+                  Registered: {format(student.registrationDate, 'MMM dd, yyyy')}
+                </p>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-7 gap-1">
@@ -201,22 +241,26 @@ export default function AttendanceCalendar({ students, onDateClick }: Attendance
                     const status = getStatusForDate(student.id, day);
                     const isToday = isSameDay(day, new Date());
                     const isCurrentMonth = isSameMonth(day, currentMonth);
+                    const isSelectable = isDateSelectable(student, day);
                     
                     return (
                       <button
                         key={day.toISOString()}
                         onClick={() => handleDateClick(student.id, day)}
                         className={`
-                          p-2 text-xs rounded-lg transition-colors
-                          ${isCurrentMonth ? 'hover:bg-gray-100' : 'text-gray-300'}
+                          p-1 sm:p-2 text-xs rounded-lg transition-colors min-h-[40px] sm:min-h-[48px]
+                          ${isCurrentMonth && isSelectable ? 'hover:bg-gray-100' : ''}
+                          ${!isCurrentMonth ? 'text-gray-300' : ''}
+                          ${!isSelectable ? 'text-gray-300 bg-gray-50 cursor-not-allowed' : ''}
                           ${isToday ? 'ring-2 ring-blue-500' : ''}
-                          ${status ? getStatusColor(status) : 'bg-white'}
+                          ${status && isSelectable ? getStatusColor(status) : 'bg-white'}
                         `}
-                        disabled={!isCurrentMonth}
+                        disabled={!isCurrentMonth || !isSelectable}
+                        title={!isSelectable ? `Not available before ${format(student.registrationDate, 'MMM dd, yyyy')}` : ''}
                       >
                         <div className="flex flex-col items-center gap-1">
-                          <span className="font-medium">{format(day, 'd')}</span>
-                          {getStatusIcon(status)}
+                          <span className="font-medium text-xs sm:text-sm">{format(day, 'd')}</span>
+                          {isSelectable && getStatusIcon(status)}
                         </div>
                       </button>
                     );
@@ -238,14 +282,23 @@ export default function AttendanceCalendar({ students, onDateClick }: Attendance
                       <Clock className="w-3 h-3 text-yellow-600" />
                       <span>Late</span>
                     </div>
+                    <div className="flex items-center gap-1">
+                      <Square className="w-3 h-3 text-gray-400" />
+                      <span>Unmarked</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div className="w-3 h-3 bg-gray-50 border border-gray-200 rounded"></div>
+                      <span>Before Registration</span>
+                    </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
-      ) : (
-        /* List View */
+      )}
+
+      {viewMode === 'list' && (
         <div className="space-y-4">
           {filteredStudents.map(student => (
             <Card key={student.id} className="border-0 shadow-lg">
@@ -254,6 +307,9 @@ export default function AttendanceCalendar({ students, onDateClick }: Attendance
                   <Users className="w-5 h-5 text-blue-600" />
                   {student.name}
                 </CardTitle>
+                <p className="text-sm text-gray-500">
+                  Registered: {format(student.registrationDate, 'MMM dd, yyyy')}
+                </p>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2">
@@ -261,6 +317,7 @@ export default function AttendanceCalendar({ students, onDateClick }: Attendance
                     const status = getStatusForDate(student.id, day);
                     const isToday = isSameDay(day, new Date());
                     const isCurrentMonth = isSameMonth(day, currentMonth);
+                    const isSelectable = isDateSelectable(student, day);
                     
                     return (
                       <button
@@ -268,15 +325,18 @@ export default function AttendanceCalendar({ students, onDateClick }: Attendance
                         onClick={() => handleDateClick(student.id, day)}
                         className={`
                           p-3 rounded-lg transition-colors text-center
-                          ${isCurrentMonth ? 'hover:bg-gray-100' : 'text-gray-300'}
+                          ${isCurrentMonth && isSelectable ? 'hover:bg-gray-100' : ''}
+                          ${!isCurrentMonth ? 'text-gray-300' : ''}
+                          ${!isSelectable ? 'text-gray-300 bg-gray-50 cursor-not-allowed' : ''}
                           ${isToday ? 'ring-2 ring-blue-500' : ''}
-                          ${status ? getStatusColor(status) : 'bg-white border border-gray-200'}
+                          ${status && isSelectable ? getStatusColor(status) : 'bg-white border border-gray-200'}
                         `}
-                        disabled={!isCurrentMonth}
+                        disabled={!isCurrentMonth || !isSelectable}
+                        title={!isSelectable ? `Not available before ${format(student.registrationDate, 'MMM dd, yyyy')}` : ''}
                       >
                         <div className="flex flex-col items-center gap-1">
                           <span className="text-xs font-medium">{format(day, 'MMM d')}</span>
-                          {getStatusIcon(status)}
+                          {isSelectable && getStatusIcon(status)}
                         </div>
                       </button>
                     );
@@ -285,6 +345,104 @@ export default function AttendanceCalendar({ students, onDateClick }: Attendance
               </CardContent>
             </Card>
           ))}
+        </div>
+      )}
+
+      {viewMode === 'table' && (
+        <div className="overflow-x-auto">
+          <Card className="border-0 shadow-lg">
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-900 border-b border-gray-200">
+                        Student
+                      </th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-900 border-b border-gray-200">
+                        Registration Date
+                      </th>
+                      {daysInMonth.map(day => (
+                        <th key={day.toISOString()} className="px-2 py-3 text-center text-xs font-medium text-gray-900 border-b border-gray-200 min-w-[60px]">
+                          <div className="flex flex-col">
+                            <span className="text-xs text-gray-500">{format(day, 'EEE')}</span>
+                            <span className="font-medium">{format(day, 'd')}</span>
+                          </div>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredStudents.map((student, index) => (
+                      <tr key={student.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                        <td className="px-4 py-3 text-sm font-medium text-gray-900 border-b border-gray-200">
+                          <div className="flex items-center gap-2">
+                            <Users className="w-4 h-4 text-blue-600" />
+                            <span className="truncate max-w-[150px]">{student.name}</span>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-600 border-b border-gray-200">
+                          {format(student.registrationDate, 'MMM dd, yyyy')}
+                        </td>
+                        {daysInMonth.map(day => {
+                          const status = getStatusForDate(student.id, day);
+                          const isToday = isSameDay(day, new Date());
+                          const isCurrentMonth = isSameMonth(day, currentMonth);
+                          const isSelectable = isDateSelectable(student, day);
+                          
+                          return (
+                            <td key={day.toISOString()} className="px-2 py-3 text-center border-b border-gray-200">
+                              <button
+                                onClick={() => handleDateClick(student.id, day)}
+                                className={`
+                                  w-full h-8 rounded-md transition-colors flex items-center justify-center
+                                  ${isCurrentMonth && isSelectable ? 'hover:bg-gray-100' : ''}
+                                  ${!isCurrentMonth ? 'text-gray-300' : ''}
+                                  ${!isSelectable ? 'text-gray-300 bg-gray-50 cursor-not-allowed' : ''}
+                                  ${isToday ? 'ring-2 ring-blue-500' : ''}
+                                  ${status && isSelectable ? getStatusColor(status) : 'bg-white border border-gray-200'}
+                                `}
+                                disabled={!isCurrentMonth || !isSelectable}
+                                title={!isSelectable ? `Not available before ${format(student.registrationDate, 'MMM dd, yyyy')}` : `${format(day, 'MMM dd, yyyy')}: ${getStatusText(status)}`}
+                              >
+                                {isSelectable && getStatusIcon(status)}
+                              </button>
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              
+              {/* Legend */}
+              <div className="p-4 border-t border-gray-200">
+                <div className="flex flex-wrap gap-4 text-xs">
+                  <div className="flex items-center gap-1">
+                    <CheckCircle className="w-3 h-3 text-green-600" />
+                    <span>Present</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <XCircle className="w-3 h-3 text-red-600" />
+                    <span>Absent</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Clock className="w-3 h-3 text-yellow-600" />
+                    <span>Late</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Square className="w-3 h-3 text-gray-400" />
+                    <span>Unmarked</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-3 bg-gray-50 border border-gray-200 rounded"></div>
+                    <span>Before Registration</span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       )}
 
