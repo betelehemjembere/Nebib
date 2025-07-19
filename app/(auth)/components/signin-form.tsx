@@ -43,28 +43,31 @@ export default function SigninForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       setLoading(true);
+      console.log("🔐 Sign-in: Attempting to sign in with:", values.email);
+      
       await authClient.signIn.email(
         {
-          email: values.email, // Correct the destructuring here
+          email: values.email,
           password: values.password,
         },
         {
           onRequest: (ctx) => {
-            console.log(ctx);
+            console.log("🔐 Sign-in: Request context:", ctx);
           },
-          onSuccess: () => {
-            router.push("/");
+          onSuccess: (ctx) => {
+            console.log("✅ Sign-in: Success context:", ctx);
+            router.push("/form-generator");
             console.log("logged in successfully");
             toast.success("Admin signed successfully");
           },
           onError: (ctx) => {
-            console.log(ctx);
+            console.log("❌ Sign-in: Error context:", ctx);
             toast.error(ctx.error.message);
           },
         }
       );
     } catch (err) {
-      console.log(err);
+      console.log("🚨 Sign-in: Exception:", err);
     } finally {
       setLoading(false);
     }

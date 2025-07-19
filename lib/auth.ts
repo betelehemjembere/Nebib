@@ -20,7 +20,10 @@ export const auth = betterAuth({
     enabled: true,
     autoSignIn: true,
   },
+  
   trustedOrigins: [
     "https://nebib-forms-production.up.railway.app",
+    "http://localhost:3000",
+    "http://localhost:3001",
   ],
 });
