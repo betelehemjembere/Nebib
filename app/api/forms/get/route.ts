@@ -25,9 +25,16 @@ export const GET = async function (request: NextRequest) {
         datas: true, // Include submissions
       },
     });
-    console.log(forms);
 
-    return new Response(JSON.stringify(forms), { status: 200 });
+    // Add submission count to each form
+    const formsWithSubmissions = forms.map(form => ({
+      ...form,
+      submissions: form.datas?.length || 0
+    }));
+
+    console.log(formsWithSubmissions);
+
+    return new Response(JSON.stringify(formsWithSubmissions), { status: 200 });
   } catch (error) {
     console.error("[FORMS_FETCH_ERROR]", error);
     const response = NextResponse.json(

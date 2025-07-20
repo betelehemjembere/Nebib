@@ -3,6 +3,7 @@ import { Geist, Nunito } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import QueryProvider from "@/components/providers/query-provider";
+import AuthDebug from "@/components/debug/auth-debug";
 
 const nunito = Nunito({
   subsets: ["latin"],
@@ -25,6 +26,7 @@ export default function RootLayout({
         <QueryProvider>
           {children}
           <Toaster position="top-right" richColors />
+          {/* <AuthDebug /> */}
         </QueryProvider>
       </body>
     </html>
