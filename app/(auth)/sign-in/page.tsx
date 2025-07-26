@@ -56,13 +56,13 @@ export default function LoginPage() {
         {
           email: values.email,
           password: values.password,
-          callbackURL: "/form-generator",
+          callbackURL: "/dashboard",
           rememberMe: false,
         },
         {
           onSuccess: (ctx) => {
             console.log("✅ Sign-in successful:", ctx);
-            router.push("/form-generator");
+            router.push("/dashboard");
           },
           onError: (error) => {
             console.error("❌ Sign-in error:", error);

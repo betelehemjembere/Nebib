@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Zap, Shield, Users, BarChart3, QrCode, FileText, Calendar, Smartphone, Database, Globe } from "lucide-react";
+import { ArrowRight, Zap, Shield, Users, BarChart3, QrCode, FileText, Calendar, Smartphone, Database, Globe, HelpCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -12,16 +12,16 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-20 text-center">
         <Badge className="mb-6 bg-gradient-to-r from-blue-500 to-indigo-500 text-white border-0">
-          🚀 Complete Form & Attendance Management Platform
+          🚀 Next-Generation Form & Attendance Management Platform
         </Badge>
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-gray-800 via-blue-700 to-indigo-700 bg-clip-text text-transparent">
-          Build Forms, Track Attendance
+          Build Forms Like Never Before
           <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">With QR Technology</span>
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Track Attendance Instantly</span>
         </h1>
         <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-3xl mx-auto px-4">
-          Create professional forms in minutes, generate QR codes for instant attendance tracking, 
-          and get real-time analytics. Perfect for schools, events, and businesses.
+          Create professional forms with inline editing, generate QR codes for seamless attendance tracking, 
+          and get real-time analytics. Better than Google Forms, perfect for schools, events, and businesses.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <Link href="/sign-in">
@@ -57,8 +57,8 @@ export default function HomePage() {
             Everything you need for modern form management
           </h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            From drag-and-drop form building to QR-based attendance tracking, 
-            NEBIB provides a complete solution for your data collection needs
+            From inline form building to advanced QR-based attendance tracking, 
+            NEBIB provides a complete solution that's better than Google Forms
           </p>
         </div>
 
@@ -68,10 +68,10 @@ export default function HomePage() {
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center mb-4">
                 <FileText className="w-6 h-6 text-white" />
               </div>
-              <CardTitle className="text-gray-800">Smart Form Builder</CardTitle>
+              <CardTitle className="text-gray-800">Inline Form Builder</CardTitle>
               <CardDescription className="text-gray-600">
-                Create professional forms with our intuitive drag-and-drop interface. 
-                Support for text, email, date, file uploads, and more field types.
+                Create professional forms with our revolutionary inline editing interface. 
+                What you see is what you get - better than Google Forms experience.
               </CardDescription>
             </CardHeader>
           </Card>
@@ -81,10 +81,10 @@ export default function HomePage() {
               <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center mb-4">
                 <QrCode className="w-6 h-6 text-white" />
               </div>
-              <CardTitle className="text-gray-800">QR Code Attendance</CardTitle>
+              <CardTitle className="text-gray-800">Advanced QR Attendance</CardTitle>
               <CardDescription className="text-gray-600">
-                Generate QR codes for instant attendance tracking. 
-                Scan with mobile devices for real-time attendance marking.
+                Generate unique QR codes for each student. 
+                Admin scans student QR codes for instant attendance marking with continuous scanning.
               </CardDescription>
             </CardHeader>
           </Card>
@@ -107,10 +107,10 @@ export default function HomePage() {
               <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex items-center justify-center mb-4">
                 <Smartphone className="w-6 h-6 text-white" />
               </div>
-              <CardTitle className="text-gray-800">Mobile Optimized</CardTitle>
+              <CardTitle className="text-gray-800">Mobile-First Design</CardTitle>
               <CardDescription className="text-gray-600">
-                Fully responsive design works perfectly on all devices. 
-                QR scanning optimized for mobile cameras and tablets.
+                Fully responsive design optimized for mobile devices. 
+                Touch-friendly interface with icon-only buttons and tooltips.
               </CardDescription>
             </CardHeader>
           </Card>
@@ -140,6 +140,19 @@ export default function HomePage() {
               </CardDescription>
             </CardHeader>
           </Card>
+
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-white/80 backdrop-blur-sm">
+            <CardHeader>
+              <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center mb-4">
+                <HelpCircle className="w-6 h-6 text-white" />
+              </div>
+              <CardTitle className="text-gray-800">Built-in Help System</CardTitle>
+              <CardDescription className="text-gray-600">
+                Comprehensive help guides and troubleshooting. 
+                Get instant support with our integrated help system.
+              </CardDescription>
+            </CardHeader>
+          </Card>
         </div>
       </section>
 
@@ -161,8 +174,8 @@ export default function HomePage() {
             </div>
             <h3 className="text-xl font-semibold mb-3 text-gray-800">Create Your Form</h3>
             <p className="text-gray-600">
-              Use our drag-and-drop builder to create professional forms with various field types. 
-              Choose from templates or start from scratch.
+              Use our revolutionary inline form builder to create professional forms instantly. 
+              What you see is what you get - no more complex steps.
             </p>
           </div>
 
@@ -172,8 +185,8 @@ export default function HomePage() {
             </div>
             <h3 className="text-xl font-semibold mb-3 text-gray-800">Generate QR Codes</h3>
             <p className="text-gray-600">
-              Automatically generate QR codes for form submissions. 
-              Users can download and save their QR codes for attendance tracking.
+              Automatically generate unique QR codes for each form submission. 
+              Students download their QR codes for easy attendance tracking.
             </p>
           </div>
 
@@ -183,8 +196,8 @@ export default function HomePage() {
             </div>
             <h3 className="text-xl font-semibold mb-3 text-gray-800">Track & Analyze</h3>
             <p className="text-gray-600">
-              Scan QR codes to mark attendance instantly. 
-              View real-time analytics and generate detailed reports.
+              Admin scans student QR codes for instant attendance marking. 
+              View real-time analytics with integrated attendance management.
             </p>
           </div>
         </div>
@@ -249,10 +262,10 @@ export default function HomePage() {
         <Card className="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white border-0 shadow-2xl">
           <CardContent className="text-center py-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Ready to transform your form management?
+              Ready to experience the future of form management?
             </h2>
             <p className="text-lg mb-8 opacity-90 max-w-2xl mx-auto">
-              Join thousands of users who are already building amazing forms and tracking attendance with NEBIB
+              Join users who are already building amazing forms with our revolutionary inline builder and advanced QR attendance system
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/sign-in">

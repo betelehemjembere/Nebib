@@ -79,11 +79,11 @@ const RegisterPage = () => {
           password: values.password,
           name: values.adminName,
           organizationName: values.organizationName,
-          callbackURL: "/form-generator",
+          callbackURL: "/dashboard",
         } as any,
         {
           onSuccess: (ctx) => {
-            router.push("/form-generator");
+            router.push("/dashboard");
           },
         }
       );

@@ -183,7 +183,7 @@ export default function ExamplesPage() {
         </h1>
         <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
           Choose from our collection of professionally designed templates for various industries. 
-          Each template includes QR code generation and attendance tracking capabilities.
+          Each template includes QR code generation and advanced attendance tracking capabilities.
         </p>
       </section>
 

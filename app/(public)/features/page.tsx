@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { FileText, QrCode, BarChart3, Users, Shield, Smartphone, Database, Globe, CheckCircle, Calendar, Mail, Settings, Download, Upload, Eye, Clock, TrendingUp, Camera } from "lucide-react";
+import { FileText, QrCode, BarChart3, Users, Shield, Smartphone, Database, Globe, CheckCircle, Calendar, Mail, Settings, Download, Upload, Eye, Clock, TrendingUp, Camera, HelpCircle } from "lucide-react";
 import Link from "next/link";
 
 export default function FeaturesPage() {
@@ -17,8 +17,8 @@ export default function FeaturesPage() {
           Everything You Need for Modern Form Management
         </h1>
         <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-          From intuitive form building to advanced QR code attendance tracking, 
-          NEBIB provides a complete solution for your data collection and management needs.
+          From revolutionary inline form building to advanced QR code attendance tracking, 
+          NEBIB provides a complete solution that's better than Google Forms.
         </p>
       </section>
 
@@ -26,10 +26,10 @@ export default function FeaturesPage() {
       <section className="container mx-auto px-4 py-20">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800">
-            Smart Form Builder
+            Revolutionary Inline Form Builder
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Create professional forms with our intuitive drag-and-drop interface
+            Create professional forms with our revolutionary inline editing interface - better than Google Forms
           </p>
         </div>
 
@@ -39,9 +39,9 @@ export default function FeaturesPage() {
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center mb-4">
                 <FileText className="w-6 h-6 text-white" />
               </div>
-              <CardTitle className="text-gray-800">Drag & Drop Interface</CardTitle>
+              <CardTitle className="text-gray-800">Inline Editing Interface</CardTitle>
               <CardDescription className="text-gray-600">
-                Intuitive form builder with drag-and-drop functionality. Add, remove, and reorder fields with ease.
+                Revolutionary inline editing with "what you see is what you get" experience. Edit everything directly in the preview.
               </CardDescription>
             </CardHeader>
           </Card>
@@ -63,9 +63,9 @@ export default function FeaturesPage() {
               <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mb-4">
                 <Eye className="w-6 h-6 text-white" />
               </div>
-              <CardTitle className="text-gray-800">Live Preview</CardTitle>
+              <CardTitle className="text-gray-800">Single-Page Builder</CardTitle>
               <CardDescription className="text-gray-600">
-                See your form as you build it with real-time preview and responsive design testing.
+                No more complex multi-step processes. Create, edit, and publish forms all in one seamless interface.
               </CardDescription>
             </CardHeader>
           </Card>
@@ -105,6 +105,18 @@ export default function FeaturesPage() {
               </CardDescription>
             </CardHeader>
           </Card>
+
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-white/80 backdrop-blur-sm">
+            <CardHeader>
+              <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center mb-4">
+                <HelpCircle className="w-6 h-6 text-white" />
+              </div>
+              <CardTitle className="text-gray-800">Built-in Help System</CardTitle>
+              <CardDescription className="text-gray-600">
+                Comprehensive help guides, troubleshooting, and instant support integrated into the platform.
+              </CardDescription>
+            </CardHeader>
+          </Card>
         </div>
       </section>
 
@@ -112,10 +124,10 @@ export default function FeaturesPage() {
       <section className="container mx-auto px-4 py-20">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800">
-            QR Code Technology
+            Advanced QR Code Technology
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Revolutionary QR code system for instant attendance tracking and data management
+            Revolutionary QR code system for seamless attendance tracking with admin-side scanning
           </p>
         </div>
 
@@ -125,9 +137,9 @@ export default function FeaturesPage() {
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center mb-4">
                 <QrCode className="w-6 h-6 text-white" />
               </div>
-              <CardTitle className="text-gray-800">Automatic Generation</CardTitle>
+              <CardTitle className="text-gray-800">Unique QR Generation</CardTitle>
               <CardDescription className="text-gray-600">
-                QR codes are automatically generated after form submission with embedded user and form data.
+                Unique QR codes are automatically generated for each form submission with embedded student and form data.
               </CardDescription>
             </CardHeader>
           </Card>
@@ -137,9 +149,9 @@ export default function FeaturesPage() {
               <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center mb-4">
                 <Camera className="w-6 h-6 text-white" />
               </div>
-              <CardTitle className="text-gray-800">Real-time Scanning</CardTitle>
+              <CardTitle className="text-gray-800">Admin-Side Scanning</CardTitle>
               <CardDescription className="text-gray-600">
-                Scan QR codes with mobile devices for instant attendance marking and data retrieval.
+                Admin scans student QR codes with continuous scanning for instant attendance marking and data retrieval.
               </CardDescription>
             </CardHeader>
           </Card>
@@ -149,9 +161,9 @@ export default function FeaturesPage() {
               <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mb-4">
                 <Smartphone className="w-6 h-6 text-white" />
               </div>
-              <CardTitle className="text-gray-800">Mobile Optimized</CardTitle>
+              <CardTitle className="text-gray-800">Continuous Scanning</CardTitle>
               <CardDescription className="text-gray-600">
-                Optimized for mobile cameras with automatic focus, error handling, and responsive design.
+                Continuous QR scanning that doesn't close after each scan, keeping the scanner active for multiple students.
               </CardDescription>
             </CardHeader>
           </Card>

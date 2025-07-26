@@ -5,9 +5,8 @@ import { betterFetch } from "@better-fetch/fetch"
 const getForms = async () => {
   console.log("Fetching forms...")
 
-  // Instead of: `${process.env.NEXT_PUBLIC_BASE_URL}/api/forms/get`
-  // Just use: "/api/forms/get"
-  const res = await betterFetch<Form[]>("/api/forms/get")
+  // Use the main forms API endpoint
+  const res = await betterFetch<Form[]>("/api/forms")
 
   console.log("Forms response: ", res)
   return res.data

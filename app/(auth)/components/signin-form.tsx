@@ -56,7 +56,7 @@ export default function SigninForm() {
           },
           onSuccess: (ctx) => {
             console.log("✅ Sign-in: Success context:", ctx);
-            router.push("/form-generator");
+            router.push("/dashboard");
             console.log("logged in successfully");
             toast.success("Admin signed successfully");
           },

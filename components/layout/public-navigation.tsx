@@ -56,6 +56,9 @@ export default function PublicNavigation({
           <Link href="/qr-demo">
             <Button variant="ghost" className="text-gray-700 hover:text-gray-900">QR Demo</Button>
           </Link>
+          <Link href="/help">
+            <Button variant="ghost" className="text-gray-700 hover:text-gray-900">Help</Button>
+          </Link>
           <Link href="/sign-in">
             <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">Get Started</Button>
           </Link>
@@ -95,6 +98,11 @@ export default function PublicNavigation({
             <Link href="/qr-demo">
               <Button variant="ghost" className="w-full justify-start text-gray-700 hover:text-gray-900">
                 QR Demo
+              </Button>
+            </Link>
+            <Link href="/help">
+              <Button variant="ghost" className="w-full justify-start text-gray-700 hover:text-gray-900">
+                Help
               </Button>
             </Link>
             <div className="pt-2 border-t border-gray-200">

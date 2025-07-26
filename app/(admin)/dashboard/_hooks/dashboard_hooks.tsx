@@ -1,50 +1,36 @@
 import { useQuery } from "@tanstack/react-query";
 import { betterFetch } from "@better-fetch/fetch";
 
-interface DashboardStats {
-  totalForms: number;
-  activeForms: number;
-  totalSubmissions: number;
-  avgResponseRate: number;
-  formTrend: number;
-  submissionTrend: number;
-  responseRateTrend: number;
-}
-
-interface RecentForm {
+interface Form {
   id: string;
-  title: string;
-  submissions: number;
-  lastSubmission: string;
+  topic: string;
+  description: string;
   status: string;
-  category: string;
   createdAt: string;
+  updatedAt: string;
+  submissions: number;
+  type: 'Public' | 'Private';
+  fields: Array<{
+    id: string;
+    label: string;
+    type: string;
+    required: boolean;
+  }>;
+  datas: Array<{
+    id: string;
+    data: any;
+    createdAt: string;
+  }>;
 }
 
-interface DashboardData {
-  stats: DashboardStats;
-  recentForms: RecentForm[];
-}
-
-const getDashboardData = async (): Promise<DashboardData> => {
-  const res = await betterFetch<DashboardData>("/api/dashboard");
-  return res.data || {
-    stats: {
-      totalForms: 0,
-      activeForms: 0,
-      totalSubmissions: 0,
-      avgResponseRate: 0,
-      formTrend: 0,
-      submissionTrend: 0,
-      responseRateTrend: 0
-    },
-    recentForms: []
-  };
+const getForms = async (): Promise<Form[]> => {
+  const res = await betterFetch<Form[]>("/api/forms");
+  return res.data || [];
 };
 
 export const useDashboardData = () => {
   return useQuery({
-    queryKey: ["dashboard"],
-    queryFn: getDashboardData,
+    queryKey: ["forms"],
+    queryFn: getForms,
   });
 }; 

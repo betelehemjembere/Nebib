@@ -16,7 +16,7 @@ export default async function page() {
     queryKey: ["forms"],
     queryFn: async () => {
       const res = await betterFetch<Form[]>(
-        `/api/forms/get`
+        `/api/forms`
       );
       return res.data;
     },

@@ -51,8 +51,8 @@ export default function QRDemoPage() {
           Experience QR Code Magic
         </h1>
         <p className="text-lg sm:text-xl text-gray-600 mb-6 sm:mb-8 max-w-3xl mx-auto px-4">
-          Test our QR code generation and scanning features. Generate QR codes for form submissions 
-          and scan them to mark attendance instantly.
+          Test our advanced QR code generation and admin-side scanning features. Generate QR codes for students 
+          and experience the admin scanning process for instant attendance marking.
         </p>
       </section>
 
@@ -82,7 +82,7 @@ export default function QRDemoPage() {
                     Generate QR Code
                   </CardTitle>
                   <CardDescription className="text-sm sm:text-base">
-                    Create a QR code with form submission data for attendance tracking
+                    Create a QR code with student form submission data for attendance tracking
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
