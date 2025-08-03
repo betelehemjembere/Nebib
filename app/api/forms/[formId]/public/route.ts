@@ -6,9 +6,9 @@ export async function OPTIONS(request: NextRequest) {
   return addCorsHeaders(new NextResponse(null, { status: 200 }), request);
 }
 
-export const GET = async (request: Request, context: { params: { formId: string } }) => {
+export const GET = async (request: Request, context: { params: Promise<{ formId: string }> }) => {
   try {
-    const { formId } = context.params
+    const { formId } = await context.params
 
     console.log("🔍 Public API - Looking for form with ID:", formId)
     console.log("📋 Public API - Request URL:", request.url)

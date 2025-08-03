@@ -30,6 +30,9 @@ export default function FormPage() {
   console.log(data);
 
   const [formValues, setFormValues] = useState<Record<string, any>>({});
+  
+  // Extract the first form from the array
+  const formData = data && data.length > 0 ? data[0] : null;
 
   const handleInputChange = (fieldId: string, value: any) => {
     setFormValues((prev) => ({
@@ -47,10 +50,10 @@ export default function FormPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!form) return;
+    if (!formData) return;
 
     // Validate required fields
-    const missingRequiredFields = form.fields
+    const missingRequiredFields = formData.fields
       .filter((field: any) => field.required)
       .filter(
         (field: any) => !formValues[field.id] && formValues[field.id] !== false
@@ -64,7 +67,7 @@ export default function FormPage() {
     try {
       // Map field IDs to labels with values
       const formattedData: Record<string, any> = {};
-      form.fields.forEach((field: any) => {
+      formData.fields.forEach((field: any) => {
         if (formValues[field.id] !== undefined) {
           formattedData[field.label] = formValues[field.id];
         }
@@ -75,7 +78,7 @@ export default function FormPage() {
       // Submit with hook or API
       await addData({
         datas: JSON.parse(JSON.stringify(formValues)),
-        formId: form.id, // Use the extracted form's id
+        formId: formData.id, // Use the extracted form's id
       });
 
       // Optionally reset form values
@@ -275,8 +278,6 @@ export default function FormPage() {
     );
   }
 
-  const form = data;
-
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
       <div className="max-w-2xl mx-auto px-4">
@@ -285,16 +286,16 @@ export default function FormPage() {
             {/* Form Header */}
             <div className="text-center mb-8">
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                {form.topic}
+                {formData?.topic}
               </h1>
               <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
-                {form.description}
+                {formData?.description}
               </p>
             </div>
 
             {/* Form Fields */}
             <form onSubmit={handleSubmit} className="space-y-6">
-              {form.fields.map((field: any) => renderField(field))}
+              {formData?.fields?.map((field: any) => renderField(field))}
 
               {/* Submit Button */}
               <div className="pt-6">

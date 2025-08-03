@@ -4,13 +4,35 @@
 import { FileText, BarChart3, Users, TrendingUp } from "lucide-react";
 import { useGetForms } from "@/app/(admin)/form-management/_hooks/form_hooks";
 
+interface Form {
+  id: string;
+  topic: string;
+  description: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  submissions: number;
+  type: 'Public' | 'Private';
+  fields: Array<{
+    id: string;
+    label: string;
+    type: string;
+    required: boolean;
+  }>;
+  datas?: Array<{
+    id: string;
+    data: any;
+    createdAt: string;
+  }>;
+}
+
 export default function TopPart() {
   const { data: forms, isLoading } = useGetForms();
 
   // Calculate real statistics
   const totalForms = forms?.length || 0;
-  const activeForms = forms?.filter(form => form.status === 'active' || !form.status).length || 0;
-  const totalSubmissions = forms?.reduce((sum, form) => sum + (form.submissions || 0), 0) || 0;
+  const activeForms = forms?.filter((form: Form) => form.status === 'active' || !form.status).length || 0;
+  const totalSubmissions = forms?.reduce((sum: number, form: Form) => sum + (form.submissions || 0), 0) || 0;
   const avgResponseRate = totalForms > 0 ? Math.round((totalSubmissions / (totalForms * 10)) * 100) : 0; // Simplified calculation
 
   // Show loading skeleton if data is loading

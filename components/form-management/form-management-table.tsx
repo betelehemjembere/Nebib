@@ -20,6 +20,28 @@ import {
 import { ConfirmDialog } from "../ui/confirm-dialog";
 import { useState } from "react";
 
+interface Form {
+  id: string;
+  topic: string;
+  description: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  submissions: number;
+  type: 'Public' | 'Private';
+  fields: Array<{
+    id: string;
+    label: string;
+    type: string;
+    required: boolean;
+  }>;
+  datas?: Array<{
+    id: string;
+    data: any;
+    createdAt: string;
+  }>;
+}
+
 const FormManagementTable = () => {
   const { data } = useGetForms();
   const deleteFormMutation = useDeleteForm();
@@ -283,7 +305,7 @@ const FormManagementTable = () => {
         {/* Form Cards */}
         {data && data.length > 0 ? (
           <div className="space-y-3">
-            {data.map((form) => (
+            {data.map((form: Form) => (
               <Card key={form.id} className="border-0 shadow-lg hover:shadow-xl transition-shadow">
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-3">

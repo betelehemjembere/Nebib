@@ -9,9 +9,10 @@ export async function OPTIONS(request: NextRequest) {
 }
 
 // GET - Get a specific form
-export const GET = async (request: NextRequest, { params }: { params: { formId: string } }) => {
+export const GET = async (request: NextRequest, { params }: { params: Promise<{ formId: string }> }) => {
   try {
-    console.log("🔍 Forms API: Starting GET request for form:", params.formId);
+    const { formId } = await params;
+    console.log("🔍 Forms API: Starting GET request for form:", formId);
     
     const headers = new Headers(request.headers);
     const session = await auth.api.getSession({ headers });
@@ -24,7 +25,7 @@ export const GET = async (request: NextRequest, { params }: { params: { formId: 
 
     const form = await db.form.findFirst({
       where: {
-        id: params.formId,
+        id: formId,
         userId: session.user.id,
       },
       include: {
@@ -54,9 +55,10 @@ export const GET = async (request: NextRequest, { params }: { params: { formId: 
 };
 
 // PUT - Update a form
-export const PUT = async (request: NextRequest, { params }: { params: { formId: string } }) => {
+export const PUT = async (request: NextRequest, { params }: { params: Promise<{ formId: string }> }) => {
   try {
-    console.log("🔍 Forms API: Starting PUT request for form:", params.formId);
+    const { formId } = await params;
+    console.log("🔍 Forms API: Starting PUT request for form:", formId);
     
     const headers = new Headers(request.headers);
     const session = await auth.api.getSession({ headers });
@@ -82,7 +84,7 @@ export const PUT = async (request: NextRequest, { params }: { params: { formId: 
     // Check if form exists and belongs to user
     const existingForm = await db.form.findFirst({
       where: {
-        id: params.formId,
+        id: formId,
         userId: session.user.id,
       },
     });
@@ -103,7 +105,7 @@ export const PUT = async (request: NextRequest, { params }: { params: { formId: 
     // Update the form
     const updatedForm = await db.form.update({
       where: {
-        id: params.formId,
+        id: formId,
       },
       data: {
         topic,
@@ -122,14 +124,14 @@ export const PUT = async (request: NextRequest, { params }: { params: { formId: 
       // Delete existing fields
       await db.field.deleteMany({
         where: {
-          formId: params.formId,
+          formId: formId,
         },
       });
 
       // Create new fields
       await db.field.createMany({
         data: fields.map((field: any) => ({
-          formId: params.formId,
+          formId: formId,
           label: field.label,
           type: field.type,
           category: field.category || '',
@@ -140,7 +142,7 @@ export const PUT = async (request: NextRequest, { params }: { params: { formId: 
       // Fetch updated form with new fields
       const finalForm = await db.form.findFirst({
         where: {
-          id: params.formId,
+          id: formId,
         },
         include: {
           fields: true,
@@ -168,9 +170,10 @@ export const PUT = async (request: NextRequest, { params }: { params: { formId: 
 };
 
 // DELETE - Delete a form
-export const DELETE = async (request: NextRequest, { params }: { params: { formId: string } }) => {
+export const DELETE = async (request: NextRequest, { params }: { params: Promise<{ formId: string }> }) => {
   try {
-    console.log("🔍 Forms API: Starting DELETE request for form:", params.formId);
+    const { formId } = await params;
+    console.log("🔍 Forms API: Starting DELETE request for form:", formId);
     
     const headers = new Headers(request.headers);
     const session = await auth.api.getSession({ headers });
@@ -184,7 +187,7 @@ export const DELETE = async (request: NextRequest, { params }: { params: { formI
     // Check if form exists and belongs to user
     const existingForm = await db.form.findFirst({
       where: {
-        id: params.formId,
+        id: formId,
         userId: session.user.id,
       },
       include: {
@@ -210,7 +213,7 @@ export const DELETE = async (request: NextRequest, { params }: { params: { formI
     // Delete the form (cascade will handle related data)
     await db.form.delete({
       where: {
-        id: params.formId,
+        id: formId,
       },
     });
 

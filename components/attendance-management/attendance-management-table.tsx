@@ -17,6 +17,28 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 
+interface Form {
+  id: string;
+  topic: string;
+  description: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  submissions: number;
+  type: 'Public' | 'Private';
+  fields: Array<{
+    id: string;
+    label: string;
+    type: string;
+    required: boolean;
+  }>;
+  datas?: Array<{
+    id: string;
+    data: any;
+    createdAt: string;
+  }>;
+}
+
 const AttendanceManagementTable = () => {
   const { data } = useGetForms();
   const router = useRouter();
@@ -50,7 +72,7 @@ const AttendanceManagementTable = () => {
     return { rate, color: 'text-red-600', bg: 'bg-red-100' };
   };
 
-  const columns: ColumnDef<NonNullable<typeof data>[number]>[] = [
+  const columns: ColumnDef<Form>[] = [
     {
       id: "select",
       header: ({ table }) => (
@@ -264,7 +286,7 @@ const AttendanceManagementTable = () => {
               <div>
                 <p className="text-xs font-medium text-gray-600">Active Forms</p>
                 <p className="text-lg font-bold text-gray-900">
-                  {data?.filter(form => form.status === 'active').length || 0}
+                  {data?.filter((form: Form) => form.status === 'active').length || 0}
                 </p>
               </div>
               <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
@@ -277,7 +299,7 @@ const AttendanceManagementTable = () => {
         {/* Form Cards */}
         {data && data.length > 0 ? (
           <div className="space-y-3">
-            {data.map((form) => {
+            {data.map((form: Form) => {
               const attendance = getAttendanceRate(form.submissions || 0);
               const date = new Date(form.updatedAt);
               const now = new Date();

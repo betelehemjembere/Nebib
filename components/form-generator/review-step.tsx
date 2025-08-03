@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -311,7 +311,7 @@ export default function ReviewStep({ setCurrentStep, onComplete, onIncomplete }:
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
-                        {getFieldIcon(field.type)}
+                        {React.createElement(getFieldIcon(field.type), { className: "w-4 h-4 text-blue-600 dark:text-blue-400" })}
                       </div>
                       <div>
                         <div className="font-medium text-gray-900 dark:text-white">{field.label}</div>
