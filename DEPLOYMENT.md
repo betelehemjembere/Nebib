@@ -14,6 +14,7 @@
    - `next.config.js`
    - `package.json`
 
+-- to be
 ### Step 2: Deploy with AWS Amplify
 1. **Login to AWS Console**
    - Go to [AWS Amplify Console](https://console.aws.amazon.com/amplify/)
